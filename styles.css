@@ -1,0 +1,276 @@
+:root {
+  color-scheme: dark;
+  font-family: Arial, sans-serif;
+  background: #111827;
+  color: #f9fafb;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #111827, #1f2937);
+}
+
+.game-shell {
+  width: min(90vw, 720px);
+  padding: 1.25rem;
+  border-radius: 16px;
+  background: rgba(17, 24, 39, 0.92);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.page {
+  display: block;
+}
+
+.page.hidden {
+  display: none;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: #60a5fa;
+}
+
+.subtitle {
+  text-align: center;
+  color: #9ca3af;
+  margin-bottom: 1.5rem;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.mode-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: 2px solid #4b5563;
+  background: transparent;
+  color: #f9fafb;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.mode-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.mode-btn:hover {
+  border-color: #60a5fa;
+}
+
+.hud, .setup-card, .question-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.hud {
+  justify-content: space-between;
+  position: relative;
+}
+
+.logout-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  background: #dc2626;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  position: absolute;
+  right: 0;
+}
+
+.logout-btn:hover {
+  background: #b91c1c;
+}
+
+.setup-card, .question-card {
+  flex-wrap: wrap;
+  padding: 0.75rem;
+  border: 1px solid #374151;
+  border-radius: 12px;
+}
+
+.setup-card {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.setup-card label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.setup-card input,
+.setup-card button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.setup-card button {
+  margin-top: 0.5rem;
+  padding: 0.8rem;
+}
+
+.question-card {
+  flex-wrap: wrap;
+}
+
+.battle-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sprite-card {
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #374151;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stats-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #60a5fa;
+}
+
+img {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  image-rendering: auto;
+}
+
+input, button {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #4b5563;
+}
+
+button {
+  cursor: pointer;
+  background: #2563eb;
+  color: #fff;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+#login-message {
+  text-align: center;
+  min-height: 1.5rem;
+  color: #fca5a5;
+  font-weight: bold;
+}
+
+.message {
+  min-height: 1.5rem;
+  font-weight: bold;
+}
+
+.dashboard-title {
+  margin: 0;
+  color: #60a5fa;
+  font-size: 1.5rem;
+}
+
+.dashboard-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-filters label {
+  font-weight: bold;
+}
+
+.dashboard-filters select {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #4b5563;
+  background: #1f2937;
+  color: #f9fafb;
+}
+
+.dashboard-table {
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(31, 41, 55, 0.5);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background: #374151;
+}
+
+th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: bold;
+  color: #60a5fa;
+}
+
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #374151;
+  color: #d1d5db;
+}
+
+tbody tr:hover {
+  background: rgba(96, 165, 250, 0.1);
+}
+
+.progress-bar {
+  background: #374151;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #10b981, #34d399);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: white;
+  font-weight: bold;
+}

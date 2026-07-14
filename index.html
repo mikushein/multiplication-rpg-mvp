@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multiplication RPG</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <!-- MODE SELECTOR -->
+      <div id="mode-selector" class="mode-selector">
+        <button id="student-mode-btn" class="mode-btn active">Student</button>
+        <button id="teacher-mode-btn" class="mode-btn">Teacher</button>
+      </div>
+
+      <!-- STUDENT LOGIN PAGE -->
+      <div id="login-page" class="page">
+        <h1 class="page-title">Multiplication RPG</h1>
+        
+        <section class="setup-card">
+          <h2>Welcome!</h2>
+          <p class="subtitle">Create a new account or login to continue</p>
+          
+          <label for="username-input">Name</label>
+          <input id="username-input" maxlength="12" placeholder="Enter your name" />
+          
+          <label for="class-input">Class Section</label>
+          <input id="class-input" maxlength="20" placeholder="e.g., 7-A" />
+          
+          <label for="password-input">Password</label>
+          <input id="password-input" type="password" maxlength="12" placeholder="Min 4 characters" />
+          
+          <button id="start-button" type="button">Start Game</button>
+          <p id="login-message" class="message"></p>
+        </section>
+      </div>
+
+      <!-- TEACHER LOGIN PAGE -->
+      <div id="teacher-login-page" class="page hidden">
+        <h1 class="page-title">Teacher Dashboard</h1>
+        
+        <section class="setup-card">
+          <h2>Teacher Access</h2>
+          <p class="subtitle">Enter your password to access the dashboard</p>
+          
+          <label for="teacher-password-input">Password</label>
+          <input id="teacher-password-input" type="password" placeholder="Enter teacher password" />
+          
+          <button id="teacher-login-btn" type="button">Login</button>
+          <p id="teacher-login-message" class="message"></p>
+        </section>
+      </div>
+
+      <!-- TEACHER DASHBOARD PAGE -->
+      <div id="teacher-dashboard-page" class="page hidden">
+        <header class="hud">
+          <h2 class="dashboard-title">Student Progress</h2>
+          <button id="teacher-logout-btn" type="button" class="logout-btn">Logout</button>
+        </header>
+
+        <section class="dashboard-filters">
+          <label for="class-filter">Filter by Class:</label>
+          <select id="class-filter">
+            <option value="">All Classes</option>
+          </select>
+        </section>
+
+        <section class="dashboard-table">
+          <table id="students-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Class</th>
+                <th>Level</th>
+                <th>XP</th>
+                <th>Progress</th>
+              </tr>
+            </thead>
+            <tbody id="students-tbody">
+              <tr><td colspan="5">Loading...</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+
+      <!-- GAME PAGE -->
+      <div id="game-page" class="page hidden">
+        <header class="hud">
+          <div>Level: <span id="level-text">-</span></div>
+          <div>XP: <span id="xp-text">0</span></div>
+          <button id="logout-button" type="button" class="logout-btn">Logout</button>
+        </header>
+
+        <section class="battle-area">
+          <div class="sprite-card">
+            <div class="stats-bar">
+              <div>HP: <span id="player-hp-text">3</span></div>
+            </div>
+            <img id="player-image" src="assets/player/idle.gif" alt="Player" />
+            <p>Player</p>
+          </div>
+          <div class="sprite-card">
+            <div class="stats-bar">
+              <div>HP: <span id="monster-hp-text">3</span></div>
+            </div>
+            <img id="monster-image" src="assets/monsters/Slime/idle.gif" alt="Monster" />
+            <p id="monster-name">Slime</p>
+          </div>
+        </section>
+
+        <section class="question-card">
+          <p id="question-text">Loading...</p>
+          <form id="answer-form">
+            <input id="answer-input" type="number" inputmode="numeric" disabled />
+            <button type="submit" disabled>Submit</button>
+          </form>
+        </section>
+
+        <p id="message-area" class="message">Ready for battle!</p>
+      </div>
+    </main>
+
+    <script type="module" src="js/game.js"></script>
+    <script type="module" src="js/teacher.js"></script>
+  </body>
+</html>

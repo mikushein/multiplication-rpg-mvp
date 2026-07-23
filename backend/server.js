@@ -7,9 +7,14 @@ const gameRoutes = require('./routes/game');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const corsOrigin = process.env.CORS_ORIGIN;
+const corsOptions = corsOrigin
+  ? { origin: corsOrigin.split(',').map((origin) => origin.trim()), credentials: true }
+  : {};
+
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Test route
 app.get('/api/health', (req, res) => {

@@ -1,4 +1,19 @@
-const API_URL = "http://localhost:5000/api";
+function resolveApiUrl() {
+  // Supports local dev and production without code edits.
+  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+    return "http://localhost:5000/api";
+  }
+
+  const override = window.__API_BASE_URL__;
+  if (override) {
+    return `${override.replace(/\/$/, "")}/api`;
+  }
+
+  // Fallback for same-origin hosting.
+  return "/api";
+}
+
+const API_URL = resolveApiUrl();
 
 // DOM Elements
 const modeSelector = document.getElementById("mode-selector");
@@ -112,8 +127,9 @@ async function loadClassesAndStudents() {
 async function loadStudents() {
   try {
     const classSection = classFilter.value || "";
+    const encodedSection = encodeURIComponent(classSection);
     const url = classSection
-      ? `${API_URL}/teacher/students?classSection=${classSection}`
+      ? `${API_URL}/teacher/students?classSection=${encodedSection}`
       : `${API_URL}/teacher/students`;
 
     const response = await fetch(url);

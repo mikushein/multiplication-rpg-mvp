@@ -1,4 +1,19 @@
-const API_URL = "http://localhost:5000/api";
+function resolveApiUrl() {
+  // Supports local dev and production without code edits.
+  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+    return "http://localhost:5000/api";
+  }
+
+  const override = window.__API_BASE_URL__;
+  if (override) {
+    return `${override.replace(/\/$/, "")}/api`;
+  }
+
+  // Fallback for same-origin hosting.
+  return "/api";
+}
+
+const API_URL = resolveApiUrl();
 
 export async function createUser(username, classSection, password) {
   try {
@@ -75,7 +90,8 @@ export async function saveGame(state) {
 
 export async function loadGame(username) {
   try {
-    const response = await fetch(`${API_URL}/game/load/${username}`, {
+    const safeUsername = encodeURIComponent(username);
+    const response = await fetch(`${API_URL}/game/load/${safeUsername}`, {
       method: "GET"
     });
 

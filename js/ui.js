@@ -102,7 +102,7 @@ export function setMonsterState(monster, state) {
 
 export const monsterAnimations = {
   Slime: {
-    idle: { src: "assets/monsters/Slime/idle.png", fps: 8, loop: true, frames: 4, frameWidth: 63, frameHeight: 70 },
+    idle: { src: "assets/monsters/Slime/idle.png", fps: 8, loop: true, frames: 4, frameWidth: 63.5, frameHeight: 70 },
     attack: { src: "assets/monsters/Slime/attack.png", fps: 10, loop: true, frames: 8, frameWidth: 58.5, frameHeight: 45 },
     hurt: { src: "assets/monsters/Slime/hurt.png", fps: 10, loop: false, frames: 6, frameWidth: 57.1666666667, frameHeight: 32 },
     defeat: { src: "assets/monsters/Slime/defeat.png", fps: 8, loop: false, frames: 8, frameWidth: 58.5, frameHeight: 45 }

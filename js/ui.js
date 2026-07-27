@@ -102,10 +102,10 @@ export function setMonsterState(monster, state) {
 
 export const monsterAnimations = {
   Slime: {
-    idle: "assets/monsters/Slime/idle.gif",
-    attack: "assets/monsters/Slime/attack.gif",
-    hurt: "assets/monsters/Slime/hurt.gif",
-    defeat: "assets/monsters/Slime/defeat.gif"
+    idle: "assets/monsters/Slime/idle.png",
+    attack: "assets/monsters/Slime/attack.png",
+    hurt: "assets/monsters/Slime/hurt.png",
+    defeat: "assets/monsters/Slime/defeat.png"
   },
   Goblin: {
     idle: { src: "assets/monsters/Goblin/idle.png", fps: 8, loop: true, frames: 4, frameWidth: 64, frameHeight: 70 },

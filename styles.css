@@ -163,7 +163,7 @@ body {
 
 img {
   width: 100%;
-  max-width: 220px;
+  max-width: 50px;
   height: auto;
   image-rendering: auto;
 }

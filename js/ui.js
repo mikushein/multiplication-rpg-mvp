@@ -51,7 +51,7 @@ function startSpriteSheetAnimation(config, state) {
     if (thisToken !== monsterAnimationToken) return;
 
     const frameHeight = config.frameHeight || monsterImage.naturalHeight;
-    const frameWidth = config.frameWidth || Math.max(1, Math.floor(monsterImage.naturalWidth / (config.frames || 1)));
+    const frameWidth = config.frameWidth || Math.max(1, Math.floor(monsterImage.naturalWidth / (config.frames || 4)));
     const frames = config.frames || Math.max(1, Math.floor(monsterImage.naturalWidth / frameWidth));
     const fps = config.fps || 8;
     const loop = config.loop ?? (state !== "defeat");

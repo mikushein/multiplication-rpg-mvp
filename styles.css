@@ -166,6 +166,13 @@ img {
   image-rendering: auto;
 }
 
+#monster-image {
+  width: auto;
+  max-width: none;
+  height: auto;
+  display: block;
+}
+
 input, button {
   padding: 0.6rem 0.8rem;
   border-radius: 8px;

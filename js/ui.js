@@ -10,6 +10,9 @@ const answerInput = document.getElementById("answer-input");
 const submitButton = document.querySelector("#answer-form button");
 const messageArea = document.getElementById("message-area");
 
+let monsterSpriteTimer = null;
+let monsterAnimationToken = 0;
+
 export const playerAnimations = {
   idle: "assets/player/idle.gif",
   attack: "assets/player/attack.gif",
@@ -22,11 +25,79 @@ export function setPlayerState(state) {
   }
 }
 
-export function setMonsterState(monster, state) {
-  const path = monsterAnimations[monster]?.[state];
-  if (monsterImage && path) {
-    monsterImage.src = path;
+function stopMonsterSpriteAnimation() {
+  if (monsterSpriteTimer) {
+    clearInterval(monsterSpriteTimer);
+    monsterSpriteTimer = null;
   }
+}
+
+function resetMonsterImageStyle() {
+  if (!monsterImage) return;
+  monsterImage.style.width = "";
+  monsterImage.style.height = "";
+  monsterImage.style.objectFit = "";
+  monsterImage.style.objectPosition = "";
+  monsterImage.style.imageRendering = "auto";
+}
+
+function startSpriteSheetAnimation(config, state) {
+  if (!monsterImage) return;
+
+  stopMonsterSpriteAnimation();
+  const thisToken = ++monsterAnimationToken;
+
+  const onLoaded = () => {
+    if (thisToken !== monsterAnimationToken) return;
+
+    const frameHeight = config.frameHeight || monsterImage.naturalHeight;
+    const frameWidth = config.frameWidth || Math.max(1, Math.floor(monsterImage.naturalWidth / (config.frames || 1)));
+    const frames = config.frames || Math.max(1, Math.floor(monsterImage.naturalWidth / frameWidth));
+    const fps = config.fps || 8;
+    const loop = config.loop ?? (state !== "defeat");
+    const frameDuration = Math.max(50, Math.floor(1000 / fps));
+
+    monsterImage.style.width = `${frameWidth}px`;
+    monsterImage.style.height = `${frameHeight}px`;
+    monsterImage.style.objectFit = "none";
+    monsterImage.style.objectPosition = "0px 0px";
+    monsterImage.style.imageRendering = "pixelated";
+
+    let frameIndex = 0;
+    monsterSpriteTimer = setInterval(() => {
+      if (thisToken !== monsterAnimationToken) return;
+      frameIndex += 1;
+
+      if (frameIndex >= frames) {
+        if (loop) {
+          frameIndex = 0;
+        } else {
+          frameIndex = frames - 1;
+          stopMonsterSpriteAnimation();
+        }
+      }
+
+      monsterImage.style.objectPosition = `${-frameIndex * frameWidth}px 0px`;
+    }, frameDuration);
+  };
+
+  monsterImage.onload = onLoaded;
+  monsterImage.src = config.src;
+}
+
+export function setMonsterState(monster, state) {
+  const animation = monsterAnimations[monster]?.[state];
+  if (!monsterImage || !animation) return;
+
+  if (typeof animation === "string") {
+    stopMonsterSpriteAnimation();
+    resetMonsterImageStyle();
+    monsterImage.onload = null;
+    monsterImage.src = animation;
+    return;
+  }
+
+  startSpriteSheetAnimation(animation, state);
 }
 
 export const monsterAnimations = {
@@ -37,10 +108,10 @@ export const monsterAnimations = {
     defeat: "assets/monsters/Slime/defeat.gif"
   },
   Goblin: {
-    idle: "assets/monsters/Goblin/idle.gif",
-    attack: "assets/monsters/Goblin/attack.gif",
-    hurt: "assets/monsters/Goblin/hurt.gif",
-    defeat: "assets/monsters/Goblin/defeat.gif"
+    idle: { src: "assets/monsters/Goblin/idle.png", fps: 8, loop: true, frames: 4 },
+    attack: { src: "assets/monsters/Goblin/attack.png", fps: 10, loop: true, frames: 4 },
+    hurt: { src: "assets/monsters/Goblin/hurt.png", fps: 10, loop: false, frames: 4 },
+    defeat: { src: "assets/monsters/Goblin/defeat.png", fps: 8, loop: false, frames: 4 }
   },
   Wolf: {
     idle: "assets/monsters/Wolf/idle.gif",

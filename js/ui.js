@@ -39,6 +39,8 @@ function resetMonsterImageStyle() {
   monsterImage.style.objectFit = "";
   monsterImage.style.objectPosition = "";
   monsterImage.style.imageRendering = "auto";
+  monsterImage.style.display = "";
+  monsterImage.style.margin = "";
 }
 
 function startSpriteSheetAnimation(config, state) {
@@ -56,12 +58,16 @@ function startSpriteSheetAnimation(config, state) {
     const fps = config.fps || 8;
     const loop = config.loop ?? (state !== "defeat");
     const frameDuration = Math.max(50, Math.floor(1000 / fps));
+    const offsetX = config.offsetX ?? 0;
+    const offsetY = config.offsetY ?? 0;
 
     monsterImage.style.width = `${frameWidth}px`;
     monsterImage.style.height = `${frameHeight}px`;
     monsterImage.style.objectFit = "none";
-    monsterImage.style.objectPosition = "0px 0px";
+    monsterImage.style.objectPosition = `${offsetX}px ${offsetY}px`;
     monsterImage.style.imageRendering = "pixelated";
+    monsterImage.style.display = "block";
+    monsterImage.style.margin = "0 auto";
 
     let frameIndex = 0;
     monsterSpriteTimer = setInterval(() => {
@@ -77,7 +83,7 @@ function startSpriteSheetAnimation(config, state) {
         }
       }
 
-      monsterImage.style.objectPosition = `${-frameIndex * frameWidth}px 0px`;
+      monsterImage.style.objectPosition = `${offsetX - frameIndex * frameWidth}px ${offsetY}px`;
     }, frameDuration);
   };
 
@@ -108,10 +114,10 @@ export const monsterAnimations = {
     defeat: "assets/monsters/Slime/defeat.gif"
   },
   Goblin: {
-    idle: { src: "assets/monsters/Goblin/idle.png", fps: 8, loop: true, frames: 4, frameWidth: 64, frameHeight: 70 },
-    attack: { src: "assets/monsters/Goblin/attack.png", fps: 10, loop: true, frames: 8, frameWidth: 58.5, frameHeight: 45 },
-    hurt: { src: "assets/monsters/Goblin/hurt.png", fps: 10, loop: false, frames: 6, frameWidth: 57.1666666667, frameHeight: 32 },
-    defeat: { src: "assets/monsters/Goblin/defeat.png", fps: 8, loop: false, frames: 8, frameWidth: 58.5, frameHeight: 45 }
+    idle: { src: "assets/monsters/Goblin/idle.png", fps: 8, loop: true, frames: 4, frameWidth: 64, frameHeight: 70, offsetX: 0, offsetY: 0 },
+    attack: { src: "assets/monsters/Goblin/attack.png", fps: 10, loop: true, frames: 8, frameWidth: 58.5, frameHeight: 45, offsetX: 0, offsetY: 0 },
+    hurt: { src: "assets/monsters/Goblin/hurt.png", fps: 10, loop: false, frames: 6, frameWidth: 57.1666666667, frameHeight: 32, offsetX: 0, offsetY: 0 },
+    defeat: { src: "assets/monsters/Goblin/defeat.png", fps: 8, loop: false, frames: 8, frameWidth: 58.5, frameHeight: 45, offsetX: 0, offsetY: 0 }
   },
   Wolf: {
     idle: "assets/monsters/Wolf/idle.gif",

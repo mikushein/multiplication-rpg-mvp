@@ -108,10 +108,10 @@ export const monsterAnimations = {
     defeat: "assets/monsters/Slime/defeat.gif"
   },
   Goblin: {
-    idle: { src: "assets/monsters/Goblin/idle.png", fps: 8, loop: true, frames: 4 },
-    attack: { src: "assets/monsters/Goblin/attack.png", fps: 10, loop: true, frames: 4 },
-    hurt: { src: "assets/monsters/Goblin/hurt.png", fps: 10, loop: false, frames: 4 },
-    defeat: { src: "assets/monsters/Goblin/defeat.png", fps: 8, loop: false, frames: 4 }
+    idle: { src: "assets/monsters/Goblin/idle.png", fps: 8, loop: true, frames: 4, frameWidth: 53, frameHeight: 22 },
+    attack: { src: "assets/monsters/Goblin/attack.png", fps: 10, loop: true, frames: 8, frameWidth: 58.5, frameHeight: 45 },
+    hurt: { src: "assets/monsters/Goblin/hurt.png", fps: 10, loop: false, frames: 6, frameWidth: 57.1666666667, frameHeight: 32 },
+    defeat: { src: "assets/monsters/Goblin/defeat.png", fps: 8, loop: false, frames: 8, frameWidth: 58.5, frameHeight: 45 }
   },
   Wolf: {
     idle: "assets/monsters/Wolf/idle.gif",

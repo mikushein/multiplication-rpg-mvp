@@ -132,6 +132,8 @@ body {
   flex-wrap: wrap;
 }
 
+/*----------- BATTLEGROUND --------------*/
+
 .battle-area {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -141,7 +143,7 @@ body {
 
 .sprite-card {
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: 50px;
   border: 1px solid #374151;
   text-align: center;
   display: flex;

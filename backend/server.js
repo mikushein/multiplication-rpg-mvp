@@ -8,9 +8,21 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const corsOrigin = process.env.CORS_ORIGIN;
-const corsOptions = corsOrigin
-  ? { origin: corsOrigin.split(',').map((origin) => origin.trim()), credentials: true }
-  : {};
+const allowedOrigins = (corsOrigin || "http://localhost:5500,http://127.0.0.1:5500,http://localhost:8080,http://127.0.0.1:8080,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000,http://127.0.0.1:8000")
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
+  credentials: true
+};
 
 // Middleware
 app.use(express.json());

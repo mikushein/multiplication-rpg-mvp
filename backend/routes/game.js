@@ -2,13 +2,16 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const GameSave = require('../models/GameSave');
+const Attempt = require('../models/Attempt');
+const GameplaySession = require('../models/GameplaySession');
+const { buildStudentProgressSummary, buildClassOverview, buildPhaseMastery, buildMissedQuestions } = require('../analytics');
 
 const TEACHER_PASSWORD = process.env.TEACHER_PASSWORD || 'teacher123';
 
 // POST - Create new user
 router.post('/user/create', async (req, res) => {
   try {
-    const { username, classSection, password } = req.body;
+    const { username, classSection, password, fullName, firstName, lastName } = req.body;
 
     if (!username || username.trim() === '') {
       return res.status(400).json({
@@ -40,8 +43,19 @@ router.post('/user/create', async (req, res) => {
       });
     }
 
+    const safeFirstName = (firstName || '').trim();
+    const safeLastName = (lastName || '').trim();
+    const resolvedFullName = (fullName || [safeFirstName, safeLastName].filter(Boolean).join(' ').trim() || username).trim();
+
     // Create new user
-    const newUser = new User({ username, classSection, password });
+    const newUser = new User({
+      username,
+      classSection,
+      password,
+      firstName: safeFirstName,
+      lastName: safeLastName,
+      fullName: resolvedFullName
+    });
     await newUser.save();
 
     // Create initial game save for this user
@@ -58,7 +72,8 @@ router.post('/user/create', async (req, res) => {
       message: 'User created successfully',
       userId: newUser._id,
       username: newUser.username,
-      classSection: newUser.classSection
+      classSection: newUser.classSection,
+      fullName: newUser.fullName
     });
   } catch (error) {
     console.error('Error creating user:', error);
@@ -103,7 +118,10 @@ router.post('/user/login', async (req, res) => {
       message: 'Login successful',
       userId: user._id,
       username: user.username,
-      classSection: user.classSection
+      classSection: user.classSection,
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      fullName: user.fullName || user.username
     });
   } catch (error) {
     console.error('Error logging in:', error);
@@ -204,6 +222,94 @@ router.post('/game/save', async (req, res) => {
   }
 });
 
+// POST - Track gameplay analytics
+router.post('/analytics/track', async (req, res) => {
+  try {
+    const { type, username, sessionId, ...payload } = req.body;
+
+    if (!type) {
+      return res.status(400).json({
+        success: false,
+        message: 'Analytics type is required'
+      });
+    }
+
+    const safeUsername = typeof username === 'string' && username.trim() ? username.trim() : 'unknown';
+
+    if (type === 'question_answered') {
+      const attempt = new Attempt({
+        username: safeUsername,
+        question: payload.question || 'unknown',
+        correctAnswer: Number(payload.correctAnswer) || 0,
+        studentAnswer: payload.studentAnswer != null ? Number(payload.studentAnswer) : null,
+        isCorrect: Boolean(payload.isCorrect),
+        responseTimeSeconds: Number(payload.responseTimeSeconds) || 0,
+        phase: Number(payload.phase) || 1,
+        level: Number(payload.level) || 1,
+        timestamp: new Date()
+      });
+
+      await attempt.save();
+      return res.json({ success: true, data: attempt });
+    }
+
+    if (type === 'session_started' || type === 'session_completed') {
+      const resolvedSessionId = sessionId || `session-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+      const basePayload = {
+        sessionId: resolvedSessionId,
+        username: safeUsername,
+        source: payload.source || 'gameplay'
+      };
+
+      if (type === 'session_started') {
+        const session = await GameplaySession.findOneAndUpdate(
+          { sessionId: resolvedSessionId },
+          {
+            ...basePayload,
+            startTime: new Date(),
+            endTime: null,
+            durationSeconds: 0,
+            completedLevels: Number(payload.completedLevels) || 0,
+            correctAnswers: Number(payload.correctAnswers) || 0,
+            incorrectAnswers: Number(payload.incorrectAnswers) || 0,
+            finalLevel: Number(payload.finalLevel) || 1,
+            outcome: 'in-progress'
+          },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+
+        return res.json({ success: true, data: session });
+      }
+
+      const session = await GameplaySession.findOneAndUpdate(
+        { sessionId: resolvedSessionId },
+        {
+          ...basePayload,
+          endTime: new Date(),
+          durationSeconds: Number(payload.durationSeconds) || 0,
+          completedLevels: Number(payload.completedLevels) || 0,
+          correctAnswers: Number(payload.correctAnswers) || 0,
+          incorrectAnswers: Number(payload.incorrectAnswers) || 0,
+          finalLevel: Number(payload.finalLevel) || 1,
+          outcome: payload.outcome || 'paused'
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+
+      return res.json({ success: true, data: session });
+    }
+
+    res.json({ success: true, data: { recorded: true } });
+  } catch (error) {
+    console.error('Error tracking analytics:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
 // POST - Teacher login
 router.post('/teacher/login', async (req, res) => {
   try {
@@ -252,12 +358,28 @@ router.get('/teacher/students', async (req, res) => {
     const studentsData = await Promise.all(
       users.map(async (user) => {
         const gameSave = await GameSave.findOne({ userId: user._id });
+        const attempts = await Attempt.find({ username: user.username }).sort({ createdAt: 1 });
+        const sessions = await GameplaySession.find({ username: user.username }).sort({ createdAt: 1 });
+        const analytics = buildStudentProgressSummary(gameSave || {}, sessions, attempts);
+
         return {
           username: user.username,
+          fullName: user.fullName || user.username,
+          firstName: user.firstName || '',
+          lastName: user.lastName || '',
           classSection: user.classSection,
           currentLevel: gameSave ? gameSave.currentLevel : 0,
           xp: gameSave ? gameSave.xp : 0,
-          progress: gameSave ? ((gameSave.currentLevel + 1) / 5 * 100) : 0
+          progress: analytics.progress,
+          accuracy: analytics.accuracy,
+          sessionsPlayed: analytics.sessionsPlayed,
+          attemptsCount: analytics.attemptsCount,
+          lastPlayed: user.lastPlayed || null,
+          attempts: attempts.map((attempt) => ({
+            phase: attempt.phase,
+            isCorrect: attempt.isCorrect,
+            question: attempt.question
+          }))
         };
       })
     );
@@ -268,6 +390,96 @@ router.get('/teacher/students', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching students:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
+// GET - Get teacher analytics overview
+router.get('/teacher/analytics/overview', async (req, res) => {
+  try {
+    const { classSection } = req.query;
+
+    let query = {};
+    if (classSection) {
+      query.classSection = classSection;
+    }
+
+    const users = await User.find(query).sort({ classSection: 1, username: 1 });
+    const studentSummaries = await Promise.all(
+      users.map(async (user) => {
+        const gameSave = await GameSave.findOne({ userId: user._id });
+        const attempts = await Attempt.find({ username: user.username }).sort({ createdAt: 1 });
+        const sessions = await GameplaySession.find({ username: user.username }).sort({ createdAt: 1 });
+        const analytics = buildStudentProgressSummary(gameSave || {}, sessions, attempts);
+
+        return {
+          username: user.username,
+          fullName: user.fullName || user.username,
+          firstName: user.firstName || '',
+          lastName: user.lastName || '',
+          classSection: user.classSection,
+          currentLevel: gameSave ? gameSave.currentLevel : 0,
+          xp: gameSave ? gameSave.xp : 0,
+          progress: analytics.progress,
+          accuracy: analytics.accuracy,
+          sessionsPlayed: analytics.sessionsPlayed,
+          attemptsCount: analytics.attemptsCount,
+          lastPlayed: user.lastPlayed || null
+        };
+      })
+    );
+
+    const overview = buildClassOverview(studentSummaries.map((student) => ({
+      progress: student.progress,
+      accuracy: student.accuracy,
+      sessionsPlayed: student.sessionsPlayed
+    })));
+
+    const studentsNeedingSupport = studentSummaries
+      .filter((student) => (Number(student.accuracy) || 0) < 60)
+      .sort((a, b) => (Number(a.accuracy) || 0) - (Number(b.accuracy) || 0))
+      .slice(0, 5);
+
+    const strongestStudents = [...studentSummaries]
+      .sort((a, b) => (Number(b.progress) || 0) - (Number(a.progress) || 0))
+      .slice(0, 5);
+
+    const phaseMastery = buildPhaseMastery(
+      studentSummaries.flatMap((student) => {
+        const attempts = student.attempts || [];
+        return attempts.map((attempt) => ({
+          phase: attempt.phase,
+          isCorrect: attempt.isCorrect
+        }));
+      })
+    );
+
+    const missedQuestions = buildMissedQuestions(
+      studentSummaries.flatMap((student) => {
+        const attempts = student.attempts || [];
+        return attempts.map((attempt) => ({
+          question: attempt.question,
+          isCorrect: attempt.isCorrect
+        }));
+      })
+    );
+
+    res.json({
+      success: true,
+      data: {
+        overview,
+        studentsNeedingSupport,
+        strongestStudents,
+        phaseMastery,
+        missedQuestions
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching analytics overview:', error);
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -287,6 +499,40 @@ router.get('/teacher/classes', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching classes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
+  }
+});
+
+// GET - Leaderboard
+router.get('/leaderboard', async (req, res) => {
+  try {
+    const users = await User.find({});
+
+    const leaderboard = await Promise.all(
+      users.map(async (user) => {
+        const gameSave = await GameSave.findOne({ userId: user._id });
+        const level = gameSave ? gameSave.currentLevel + 1 : 1;
+        const score = gameSave ? gameSave.xp : 0;
+
+        return {
+          username: user.username,
+          level,
+          score
+        };
+      })
+    );
+
+    leaderboard.sort((a, b) => b.score - a.score || a.username.localeCompare(b.username));
+
+    res.json({
+      success: true,
+      data: leaderboard
+    });
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
     res.status(500).json({
       success: false,
       message: 'Server error'

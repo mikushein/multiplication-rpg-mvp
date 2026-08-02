@@ -7,32 +7,133 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="game-shell">
-      <!-- MODE SELECTOR -->
-      <div id="mode-selector" class="mode-selector">
-        <button id="student-mode-btn" class="mode-btn active">Student</button>
-        <button id="teacher-mode-btn" class="mode-btn">Teacher</button>
+    <div class="game-stage">
+      <main class="game-shell">
+      <div id="landing-page" class="page">
+        <div class="landing-hero">
+          <div class="title-sprite" aria-hidden="true"></div>
+          <h1 class="landing-title">Multiplication RPG</h1>
+          <p class="landing-subtitle">Practice your times tables and beat the monsters.</p>
+        </div>
+
+        <div class="landing-buttons">
+          <button id="start-game-btn" class="landing-btn landing-btn-start" type="button">Start Game</button>
+          <button id="teacher-entry-btn" class="landing-btn landing-btn-teacher" type="button">Teacher? Click Here</button>
+        </div>
       </div>
 
-      <!-- STUDENT LOGIN PAGE -->
-      <div id="login-page" class="page">
-        <h1 class="page-title">Multiplication RPG</h1>
-        
-        <section class="setup-card">
-          <h2>Welcome!</h2>
-          <p class="subtitle">Create a new account or login to continue</p>
-          
-          <label for="username-input">Name</label>
-          <input id="username-input" maxlength="12" placeholder="Enter your name" />
-          
-          <label for="class-input">Class Section</label>
-          <input id="class-input" maxlength="20" placeholder="e.g., 7-A" />
-          
-          <label for="password-input">Password</label>
-          <input id="password-input" type="password" maxlength="12" placeholder="Min 4 characters" />
-          
-          <button id="start-button" type="button">Start Game</button>
-          <p id="login-message" class="message"></p>
+      <div id="student-auth-page" class="page hidden">
+        <section class="auth-card">
+          <div class="auth-tabs" role="tablist" aria-label="Student access">
+            <button id="student-login-tab" class="auth-tab active" type="button">Login</button>
+            <button id="student-create-tab" class="auth-tab" type="button">Create Account</button>
+          </div>
+
+          <form id="student-login-form" class="auth-form">
+            <label for="student-username-input">Username</label>
+            <input id="student-username-input" maxlength="12" placeholder="Enter your username" />
+
+            <label for="student-password-input">Password</label>
+            <input id="student-password-input" type="password" maxlength="12" placeholder="Enter your password" />
+
+            <button id="student-login-submit" type="submit">Login</button>
+          </form>
+
+          <form id="student-create-form" class="auth-form hidden">
+            <label for="student-first-name-input">First Name</label>
+            <input id="student-first-name-input" maxlength="20" placeholder="First name" />
+
+            <label for="student-last-name-input">Last Name</label>
+            <input id="student-last-name-input" maxlength="20" placeholder="Last name" />
+
+            <label for="student-new-username-input">Username</label>
+            <input id="student-new-username-input" maxlength="12" placeholder="Choose a username" />
+
+            <label for="student-section-input">Section</label>
+            <input id="student-section-input" maxlength="20" placeholder="e.g., 7-A" />
+
+            <label for="student-new-password-input">Password</label>
+            <input id="student-new-password-input" type="password" maxlength="12" placeholder="Min 4 characters" />
+
+            <label for="student-confirm-password-input">Confirm Password</label>
+            <input id="student-confirm-password-input" type="password" maxlength="12" placeholder="Type your password again" />
+
+            <button id="student-create-submit" type="submit">Create Account</button>
+          </form>
+
+          <button id="student-back-btn" class="text-link-btn" type="button">Back to title</button>
+          <p id="student-auth-message" class="message"></p>
+        </section>
+      </div>
+
+      <div id="post-login-menu-page" class="page hidden">
+        <section class="menu-card">
+          <h2 class="menu-title">Adventure Menu</h2>
+          <p class="menu-subtitle">Choose how you want to begin.</p>
+          <div class="menu-buttons">
+            <button id="new-game-btn" class="menu-btn" type="button">New Game</button>
+            <button id="continue-btn" class="menu-btn" type="button">Continue</button>
+            <button id="leaderboard-btn" class="menu-btn" type="button">Leaderboard</button>
+            <button id="credits-btn" class="menu-btn" type="button">Credits</button>
+            <button id="exit-btn" class="menu-btn menu-btn-exit" type="button">Exit</button>
+          </div>
+          <p id="menu-message" class="message"></p>
+        </section>
+      </div>
+
+      <div id="leaderboard-page" class="page hidden">
+        <section class="menu-card leaderboard-card">
+          <div class="leaderboard-header">
+            <h2 class="menu-title">Leaderboard</h2>
+            <button id="leaderboard-back-btn" class="text-link-btn" type="button">Back</button>
+          </div>
+          <div class="leaderboard-table-wrap">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Username</th>
+                  <th>Level</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-body">
+                <tr><td colspan="4">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div id="credits-page" class="page hidden">
+        <section class="menu-card credits-card">
+          <div class="credits-header">
+            <h2 class="menu-title">Credits</h2>
+            <button id="credits-back-btn" class="text-link-btn" type="button">Back</button>
+          </div>
+          <div class="credits-content">
+            <p class="credits-intro">This game was made with love, practice, and a lot of learning.</p>
+
+            <div class="credits-section">
+              <h3>Created by</h3>
+              <p>[Your Name]</p>
+            </div>
+
+            <div class="credits-section">
+              <h3>Project role</h3>
+              <p>Game creator • designer • coder • tester</p>
+            </div>
+
+            <div class="credits-section">
+              <h3>Special thanks</h3>
+              <p>Copilot and ChatGPT for helping with code, ideas, and problem-solving.</p>
+            </div>
+
+            <div class="credits-section">
+              <h3>Made for</h3>
+              <p>[Class / School / Family / Friends]</p>
+            </div>
+          </div>
         </section>
       </div>
 
@@ -48,64 +149,169 @@
           <input id="teacher-password-input" type="password" placeholder="Enter teacher password" />
           
           <button id="teacher-login-btn" type="button">Login</button>
+          <button id="teacher-back-btn" class="text-link-btn" type="button">Back to title</button>
           <p id="teacher-login-message" class="message"></p>
         </section>
       </div>
 
       <!-- TEACHER DASHBOARD PAGE -->
       <div id="teacher-dashboard-page" class="page hidden">
-        <header class="hud">
-          <h2 class="dashboard-title">Student Progress</h2>
-          <button id="teacher-logout-btn" type="button" class="logout-btn">Logout</button>
-        </header>
+        <div class="dashboard-shell">
+          <section class="dashboard-panel dashboard-panel-top">
+            <h2 class="dashboard-title">Student Progress</h2>
+            <button id="teacher-logout-btn" type="button" class="logout-btn">Logout</button>
+          </section>
 
-        <section class="dashboard-filters">
-          <label for="class-filter">Filter by Class:</label>
-          <select id="class-filter">
-            <option value="">All Classes</option>
-          </select>
-        </section>
+          <section class="dashboard-panel dashboard-panel-filter">
+            <label for="class-filter">Filter by Class:</label>
+            <select id="class-filter">
+              <option value="">All Classes</option>
+            </select>
+          </section>
 
-        <section class="dashboard-table">
-          <table id="students-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Class</th>
-                <th>Level</th>
-                <th>XP</th>
-                <th>Progress</th>
-              </tr>
-            </thead>
-            <tbody id="students-tbody">
-              <tr><td colspan="5">Loading...</td></tr>
-            </tbody>
-          </table>
-        </section>
+          <section class="dashboard-panel dashboard-panel-chart">
+            <div class="dashboard-chart-header">
+              <h3>Progress Overview</h3>
+              <span>Current progress by student</span>
+            </div>
+            <svg id="teacher-progress-chart" viewBox="0 0 320 180" role="img" aria-label="Student progress chart"></svg>
+          </section>
+
+          <section class="dashboard-panel dashboard-panel-summary">
+            <div class="summary-card">
+              <span class="summary-label">Total students</span>
+              <strong id="summary-total-students">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Average accuracy</span>
+              <strong id="summary-average-accuracy">0%</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Need support</span>
+              <strong id="summary-support-count">0</strong>
+            </div>
+          </section>
+
+          <section class="dashboard-panel dashboard-panel-insights">
+            <div class="dashboard-insights-header">
+              <h3>Class insights</h3>
+              <span>Quick view of growth and support needs</span>
+            </div>
+            <div class="insight-grid">
+              <div class="insight-list">
+                <h4>Needs support</h4>
+                <ul id="teacher-support-list"></ul>
+              </div>
+              <div class="insight-list">
+                <h4>Strongest progress</h4>
+                <ul id="teacher-strong-list"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="dashboard-panel dashboard-panel-analytics">
+            <div class="dashboard-insights-header">
+              <h3>Mastery breakdown</h3>
+              <span>Phase-by-phase accuracy and challenging questions</span>
+            </div>
+            <div class="insight-grid">
+              <div class="insight-list">
+                <h4>Phase accuracy</h4>
+                <ul id="teacher-phase-list"></ul>
+              </div>
+              <div class="insight-list">
+                <h4>Missed questions</h4>
+                <ul id="teacher-missed-list"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="dashboard-panel dashboard-panel-detail">
+            <div class="dashboard-detail-header">
+              <h3>Student detail</h3>
+              <span>Select a row in the table</span>
+            </div>
+            <div id="teacher-student-detail" class="student-detail-card">
+              Select a student to view their current progress and mastery snapshot.
+            </div>
+          </section>
+
+          <section class="dashboard-panel dashboard-panel-table">
+            <div class="dashboard-table">
+              <table id="students-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Class</th>
+                    <th>Level</th>
+                    <th>XP</th>
+                    <th>Accuracy</th>
+                    <th>Sessions</th>
+                    <th>Progress</th>
+                  </tr>
+                </thead>
+                <tbody id="students-tbody">
+                  <tr><td colspan="7">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
       </div>
 
       <!-- GAME PAGE -->
       <div id="game-page" class="page hidden">
-        <header class="hud">
-          <div>Level: <span id="level-text">-</span></div>
-          <div>XP: <span id="xp-text">0</span></div>
-          <button id="logout-button" type="button" class="logout-btn">Logout</button>
-        </header>
+        <div class="battle-top-bar">
+          <div class="battle-top-spacer"></div>
+          <button id="pause-button" type="button" class="battle-nav-btn">Pause</button>
+        </div>
+
+        <div id="pause-menu" class="pause-menu hidden" aria-live="polite">
+          <div class="pause-panel">
+            <h3>Paused</h3>
+            <button id="continue-game-btn" class="pause-action-btn" type="button">Continue</button>
+            <button id="save-game-btn" class="pause-action-btn pause-action-save" type="button">Save Game</button>
+            <button id="exit-save-btn" class="pause-action-btn pause-action-exit" type="button">Exit & Save</button>
+          </div>
+        </div>
+
+        <div class="battle-status-bar">
+          <div class="battle-status-left">Phase 1 · Level <span id="level-text">-</span></div>
+          <div class="battle-status-right">Score: <span id="xp-text">0000</span></div>
+        </div>
 
         <section class="battle-area">
-          <div class="sprite-card">
-            <div class="stats-bar">
-              <div>HP: <span id="player-hp-text">3</span></div>
+          <div class="battlefield-container">
+            <!-- <div class="battlefield-topbar">
+              <div class="battlefield-label">Battlefield</div>
+              <div class="battlefield-phase">Phase 1 · Level 1</div>
+            </div> -->
+
+            <div class="battle-dialogue-box">
+              <p id="message-area" class="message">Ready for battle!</p>
             </div>
-            <img id="player-image" src="assets/player/idle.gif" alt="Player" />
-            <p>Player</p>
-          </div>
-          <div class="sprite-card">
-            <div class="stats-bar">
-              <div>HP: <span id="monster-hp-text">3</span></div>
+
+            <div class="battle-characters">
+              <div class="sprite-card player-side">
+                <div class="stats-bar">
+                  <div>HP: <span id="player-hp-text">3</span></div>
+                </div>
+                <div class="sprite-slot">
+                  <img id="player-image" src="assets/player/idle.png" alt="Player" />
+                </div>
+                <p class="sprite-name">Player</p>
+              </div>
+
+              <div class="sprite-card monster-side">
+                <div class="stats-bar">
+                  <div>HP: <span id="monster-hp-text">3</span></div>
+                </div>
+                <div class="sprite-slot">
+                  <img id="monster-image" src="assets/monsters/Slime1/idle.png" alt="Monster" />
+                </div>
+                <p id="monster-name" class="sprite-name">Slime</p>
+              </div>
             </div>
-            <img id="monster-image" src="assets/monsters/Slime/idle.png" alt="Monster" />
-            <p id="monster-name">Slime</p>
           </div>
         </section>
 
@@ -116,14 +322,13 @@
             <button type="submit" disabled>Submit</button>
           </form>
         </section>
-
-        <p id="message-area" class="message">Ready for battle!</p>
       </div>
-    </main>
+      </main>
+    </div>
 
     <script>
-      // Set this after backend deployment, e.g. "https://your-backend.onrender.com"
-      window.__API_BASE_URL__ = "https://multiplication-rpg-mvp.onrender.com";
+      // Local development default. Change back to the deployed backend URL when you publish again.
+      window.__API_BASE_URL__ = "http://localhost:5000";
     </script>
     <script type="module" src="js/game.js"></script>
     <script type="module" src="js/teacher.js"></script>

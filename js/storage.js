@@ -15,12 +15,12 @@ function resolveApiUrl() {
 
 const API_URL = resolveApiUrl();
 
-export async function createUser(username, classSection, password) {
+export async function createUser(username, classSection, password, fullName = "") {
   try {
     const response = await fetch(`${API_URL}/user/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, classSection, password })
+      body: JSON.stringify({ username, classSection, password, fullName })
     });
 
     const data = await response.json();
@@ -110,6 +110,60 @@ export async function loadGame(username) {
     }
   } catch (error) {
     console.error("Error loading game:", error);
+    return null;
+  }
+}
+
+export async function fetchLeaderboard() {
+  try {
+    const response = await fetch(`${API_URL}/leaderboard`, {
+      method: "GET"
+    });
+
+    const text = await response.text();
+
+    if (!text) {
+      console.error("Leaderboard endpoint returned no content.");
+      return [];
+    }
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error("Leaderboard response was not valid JSON:", text);
+      return [];
+    }
+
+    if (data.success) {
+      return Array.isArray(data.data) ? data.data : [];
+    }
+
+    console.error("Failed to load leaderboard:", data.message || "Unknown error");
+    return [];
+  } catch (error) {
+    console.error("Error loading leaderboard:", error);
+    return [];
+  }
+}
+
+export async function trackAnalyticsEvent(type, payload = {}) {
+  try {
+    const response = await fetch(`${API_URL}/analytics/track`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, ...payload })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      return data.data || data;
+    }
+
+    console.warn("Analytics tracking failed:", data.message || "Unknown error");
+    return null;
+  } catch (error) {
+    console.warn("Analytics tracking unavailable:", error);
     return null;
   }
 }

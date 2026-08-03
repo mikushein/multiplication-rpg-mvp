@@ -34,8 +34,7 @@ const progressChart = document.getElementById("teacher-progress-chart");
 const summaryTotalStudents = document.getElementById("summary-total-students");
 const summaryAverageAccuracy = document.getElementById("summary-average-accuracy");
 const summarySupportCount = document.getElementById("summary-support-count");
-const teacherSupportList = document.getElementById("teacher-support-list");
-const teacherStrongList = document.getElementById("teacher-strong-list");
+const teacherInsightsBody = document.getElementById("teacher-insights-body");
 const teacherPhaseList = document.getElementById("teacher-phase-list");
 const teacherMissedList = document.getElementById("teacher-missed-list");
 const teacherStudentDetail = document.getElementById("teacher-student-detail");
@@ -215,20 +214,26 @@ async function loadAnalyticsOverview() {
         summarySupportCount.textContent = supportCount;
       }
 
-      if (teacherSupportList) {
-        teacherSupportList.innerHTML = studentsNeedingSupport.length
-          ? studentsNeedingSupport
-              .map((student) => `<li>${student.fullName || student.username} · ${Math.round(student.accuracy || 0)}% accuracy</li>`)
-              .join("")
-          : "<li>No students need immediate support yet.</li>";
-      }
+      const insightsRows = [...studentsNeedingSupport, ...strongestStudents]
+        .filter((student, index, array) => array.findIndex((entry) => (entry.username || entry.fullName) === (student.username || student.fullName)) === index)
+        .slice(0, 8);
 
-      if (teacherStrongList) {
-        teacherStrongList.innerHTML = strongestStudents.length
-          ? strongestStudents
-              .map((student) => `<li>${student.fullName || student.username} · ${Math.round(student.progress || 0)}% progress</li>`)
-              .join("")
-          : "<li>No strong performers yet.</li>";
+      if (teacherInsightsBody) {
+        teacherInsightsBody.innerHTML = insightsRows.length
+          ? insightsRows.map((student) => {
+              const accuracy = Math.round(student.accuracy || 0);
+              const progress = Math.round(student.progress || 0);
+              const status = accuracy < 60 ? "Needs support" : progress >= 70 ? "Strong" : "Steady";
+              return `
+                <tr>
+                  <td>${student.fullName || student.username}</td>
+                  <td>${progress}%</td>
+                  <td>${accuracy}%</td>
+                  <td>${status}</td>
+                </tr>
+              `;
+            }).join("")
+          : "<tr><td colspan='4'>No insight data yet.</td></tr>";
       }
 
       if (teacherPhaseList) {

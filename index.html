@@ -171,7 +171,7 @@
 
           <section class="dashboard-panel dashboard-panel-chart">
             <div class="dashboard-chart-header">
-              <h3>Progress Overview</h3>
+              <h3>Overall Progress</h3>
               <span>Current progress by student</span>
             </div>
             <svg id="teacher-progress-chart" viewBox="0 0 320 180" role="img" aria-label="Student progress chart"></svg>
@@ -197,30 +197,33 @@
               <h3>Class insights</h3>
               <span>Quick view of growth and support needs</span>
             </div>
-            <div class="insight-grid">
-              <div class="insight-list">
-                <h4>Needs support</h4>
-                <ul id="teacher-support-list"></ul>
-              </div>
-              <div class="insight-list">
-                <h4>Strongest progress</h4>
-                <ul id="teacher-strong-list"></ul>
-              </div>
+            <div class="insight-table-wrap">
+              <table class="insight-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Progress</th>
+                    <th>Accuracy</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="teacher-insights-body"></tbody>
+              </table>
             </div>
           </section>
 
           <section class="dashboard-panel dashboard-panel-analytics">
             <div class="dashboard-insights-header">
               <h3>Mastery breakdown</h3>
-              <span>Phase-by-phase accuracy and challenging questions</span>
+              <span>Class phase accuracy and questions most often missed</span>
             </div>
             <div class="insight-grid">
               <div class="insight-list">
-                <h4>Phase accuracy</h4>
+                <h4>Class phase accuracy</h4>
                 <ul id="teacher-phase-list"></ul>
               </div>
               <div class="insight-list">
-                <h4>Missed questions</h4>
+                <h4>Most often missed questions</h4>
                 <ul id="teacher-missed-list"></ul>
               </div>
             </div>
@@ -229,10 +232,10 @@
           <section class="dashboard-panel dashboard-panel-detail">
             <div class="dashboard-detail-header">
               <h3>Student detail</h3>
-              <span>Select a row in the table</span>
+              <span>Select a student from the table</span>
             </div>
             <div id="teacher-student-detail" class="student-detail-card">
-              Select a student to view their current progress and mastery snapshot.
+              Select a student from the table to view their current progress and mastery snapshot.
             </div>
           </section>
 

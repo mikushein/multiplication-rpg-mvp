@@ -16,7 +16,7 @@ const summary = buildStudentProgressSummary(
   [{ isCorrect: true }, { isCorrect: false }, { isCorrect: true }]
 );
 
-assert.strictEqual(summary.progress, 11, 'progress should reflect the highest completed level against 18 total levels');
+assert.strictEqual(summary.progress, 17, 'progress should reflect the highest reached level against 18 total levels');
 assert.strictEqual(summary.accuracy, 67, 'accuracy should round to 67% for 2/3 correct');
 assert.strictEqual(summary.sessionsPlayed, 1, 'one session should be counted');
 assert.strictEqual(summary.attemptsCount, 3, 'three attempts should be counted');

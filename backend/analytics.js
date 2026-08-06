@@ -8,15 +8,21 @@ function calculateAccuracy(correctAnswers, incorrectAnswers) {
 }
 
 function buildStudentProgressSummary(gameSave = {}, sessions = [], attempts = []) {
-  const completedLevels = sessions.reduce((total, session) => total + (session.completedLevels || 0), 0);
   const correctAnswers = attempts.reduce((total, attempt) => total + (attempt.isCorrect ? 1 : 0), 0);
   const incorrectAnswers = attempts.reduce((total, attempt) => total + (!attempt.isCorrect ? 1 : 0), 0);
   const accuracy = calculateAccuracy(correctAnswers, incorrectAnswers);
-  const effectiveLevel = Math.max(gameSave.currentLevel || 0, completedLevels, 0);
   const totalLevels = 18;
 
+  const currentLevelIndex = Number(gameSave.currentLevel) || 0;
+  const highestSessionLevel = sessions.reduce((max, session) => {
+    const completedLevels = Number(session.completedLevels) || 0;
+    return Math.max(max, completedLevels);
+  }, 0);
+  const effectiveLevelIndex = Math.max(currentLevelIndex, highestSessionLevel, 0);
+  const progressLevel = effectiveLevelIndex + 1;
+
   return {
-    progress: Math.min(100, Math.round((effectiveLevel / totalLevels) * 100)),
+    progress: Math.min(100, Math.round((progressLevel / totalLevels) * 100)),
     accuracy,
     sessionsPlayed: sessions.length,
     attemptsCount: attempts.length

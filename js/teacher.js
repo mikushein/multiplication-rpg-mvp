@@ -318,6 +318,95 @@ function renderClassTrendChart(students) {
   `;
 }
 
+function formatDisplayDate(student) {
+  const attempts = Array.isArray(student?.attempts) ? student.attempts : [];
+  const timestamps = attempts
+    .map((attempt) => attempt.timestamp || attempt.createdAt)
+    .filter(Boolean)
+    .map((value) => new Date(value))
+    .filter((value) => !Number.isNaN(value.getTime()));
+
+  if (!timestamps.length) {
+    return "—";
+  }
+
+  const latest = timestamps.sort((a, b) => b - a)[0];
+  return latest.toLocaleDateString();
+}
+
+function getStudentAttemptSummary(student) {
+  const attempts = Array.isArray(student?.attempts) ? student.attempts : [];
+  const totalQuestions = attempts.length;
+  const correctAnswers = attempts.filter((attempt) => attempt.isCorrect).length;
+  const incorrectAnswers = attempts.filter((attempt) => !attempt.isCorrect).length;
+  const accuracy = calculateAccuracy(correctAnswers, incorrectAnswers);
+  const averageResponseTime = totalQuestions
+    ? (attempts.reduce((sum, attempt) => sum + (Number(attempt.responseTimeSeconds) || 0), 0) / totalQuestions).toFixed(1)
+    : "0.0";
+
+  const highestPhase = attempts.reduce((highest, attempt) => {
+    const phaseValue = Number(attempt.phase) || 0;
+    return Math.max(highest, phaseValue);
+  }, 0);
+
+  const highestLevel = attempts.reduce((highest, attempt) => {
+    if ((Number(attempt.phase) || 0) !== highestPhase) {
+      return highest;
+    }
+
+    const levelValue = Number(attempt.level) || 0;
+    return Math.max(highest, levelValue);
+  }, 0);
+
+  const latestActivity = formatDisplayDate(student);
+
+  return {
+    studentName: student.fullName || student.username || "Unknown student",
+    totalAttempts: totalQuestions,
+    totalQuestions,
+    correctAnswers,
+    incorrectAnswers,
+    accuracy,
+    averageResponseTime,
+    highestPhase,
+    highestLevel,
+    score: Number(student.xp) || 0,
+    latestActivity
+  };
+}
+
+function renderStudentSummaryTable(students) {
+  if (!studentsTableBody) return;
+
+  studentsTableBody.innerHTML = "";
+
+  if (!students.length) {
+    studentsTableBody.innerHTML = '<tr><td colspan="11">No students found</td></tr>';
+    return;
+  }
+
+  const rows = students.map((student) => {
+    const summary = getStudentAttemptSummary(student);
+    return `
+      <tr class="student-table-row" data-username="${student.username || ""}">
+        <td>${summary.studentName}</td>
+        <td>${summary.totalAttempts}</td>
+        <td>${summary.highestPhase}</td>
+        <td>${summary.highestLevel}</td>
+        <td>${summary.totalQuestions}</td>
+        <td>${summary.correctAnswers}</td>
+        <td>${summary.incorrectAnswers}</td>
+        <td>${summary.accuracy}%</td>
+        <td>${summary.averageResponseTime}s</td>
+        <td>${summary.score}</td>
+        <td>${summary.latestActivity}</td>
+      </tr>
+    `;
+  }).join("");
+
+  studentsTableBody.innerHTML = rows;
+}
+
 function renderClassOverviewTable(students) {
   if (!teacherClassTableBody) return;
 
@@ -729,42 +818,9 @@ async function loadStudents() {
 
     dashboardStudents = Array.isArray(data.data) ? data.data : [];
 
-    if (studentsTableBody) {
-      studentsTableBody.innerHTML = "";
-    }
+    renderStudentSummaryTable(dashboardStudents);
 
     if (dashboardStudents.length > 0) {
-      if (studentsTableBody) {
-        dashboardStudents.forEach((student) => {
-          const row = document.createElement("tr");
-          row.className = "student-table-row";
-          row.dataset.username = student.username;
-
-          const attempts = Array.isArray(student.attempts) ? student.attempts : [];
-          const correctAnswers = attempts.filter((attempt) => attempt.isCorrect).length;
-          const incorrectAnswers = attempts.filter((attempt) => !attempt.isCorrect).length;
-          const accuracyPercent = calculateAccuracy(correctAnswers, incorrectAnswers);
-          const averageResponseTime = attempts.length
-            ? (attempts.reduce((sum, attempt) => sum + (Number(attempt.responseTimeSeconds) || 0), 0) / attempts.length).toFixed(1)
-            : "0.0";
-          const levelLabel = getLevelLabel(student);
-          const status = getPerformanceStatus(accuracyPercent);
-
-          row.innerHTML = `
-            <td>${student.fullName || student.username}</td>
-            <td>${levelLabel}</td>
-            <td>${attempts.length}</td>
-            <td>${correctAnswers}</td>
-            <td>${incorrectAnswers}</td>
-            <td>${accuracyPercent}%</td>
-            <td>${averageResponseTime}s</td>
-            <td>${Number(student.xp) || 0}</td>
-            <td><span class="status-pill ${status.className}">${status.label}</span></td>
-          `;
-          studentsTableBody.appendChild(row);
-        });
-      }
-
       populateStudentSelector(dashboardStudents);
 
       const initialSelection = selectedStudentUsername

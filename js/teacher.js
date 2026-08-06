@@ -46,7 +46,6 @@ const teacherStudentDetail = document.getElementById("teacher-student-detail");
 const teacherClassTableBody = document.getElementById("teacher-class-table-body");
 const teacherDifficultyChart = document.getElementById("teacher-difficulty-chart");
 const teacherMistakesList = document.getElementById("teacher-mistakes-list");
-const teacherRecommendationsList = document.getElementById("teacher-recommendations-list");
 const teacherClassTab = document.getElementById("teacher-class-tab");
 const teacherStudentTab = document.getElementById("teacher-student-tab");
 const teacherClassView = document.getElementById("teacher-class-view");
@@ -222,7 +221,6 @@ function selectStudent(username) {
     clearStudentSelection();
     renderStudentDetail(null);
     renderProgressChart(dashboardStudents);
-    renderRecommendations(dashboardStudents);
     return;
   }
 
@@ -239,7 +237,6 @@ function selectStudent(username) {
   const student = dashboardStudents.find((entry) => entry.username === username);
   renderStudentDetail(student || null);
   renderProgressChart(dashboardStudents);
-  renderRecommendations(dashboardStudents);
 }
 
 function buildClassTrend(students) {
@@ -564,47 +561,6 @@ function renderCommonMistakes(students) {
     : "<li>No mistakes recorded yet.</li>";
 }
 
-function renderRecommendations(students) {
-  if (!teacherRecommendationsList) return;
-
-  const sourceStudents = Array.isArray(students) ? students : [];
-  const selectedStudent = sourceStudents.find((student) => student.username === selectedStudentUsername);
-  const studentList = selectedStudent ? [selectedStudent] : sourceStudents;
-  const recommendations = [];
-
-  studentList.forEach((student) => {
-    const attempts = Array.isArray(student.attempts) ? student.attempts : [];
-    const correctAnswers = attempts.filter((attempt) => attempt.isCorrect).length;
-    const incorrectAnswers = attempts.filter((attempt) => !attempt.isCorrect).length;
-    const accuracy = calculateAccuracy(correctAnswers, incorrectAnswers);
-    const avgResponseTime = attempts.length
-      ? attempts.reduce((sum, attempt) => sum + (Number(attempt.responseTimeSeconds) || 0), 0) / attempts.length
-      : 0;
-    const trendPoints = buildTrends(student);
-    const recentAccuracy = trendPoints.length ? trendPoints[trendPoints.length - 1].accuracy : accuracy;
-    const earlierAccuracy = trendPoints.length > 1 ? trendPoints[0].accuracy : accuracy;
-    const weakTables = buildTablePerformance([student]).filter((entry) => entry.total >= 3 && entry.accuracy < 60);
-
-    if (accuracy < 60 && weakTables.length) {
-      recommendations.push(`Review the ${weakTables[0].table} table with ${student.fullName || student.username}.`);
-    }
-
-    if (avgResponseTime > 12 && accuracy < 80) {
-      recommendations.push(`${student.fullName || student.username} is answering slowly; add short timed practice sessions.`);
-    }
-
-    if (trendPoints.length > 1 && recentAccuracy < earlierAccuracy - 8) {
-      recommendations.push(`${student.fullName || student.username} shows a recent drop in accuracy; schedule a review session.`);
-    }
-  });
-
-  if (!recommendations.length) {
-    recommendations.push("Keep the current pace and introduce a new challenge level for confident learners.");
-  }
-
-  teacherRecommendationsList.innerHTML = recommendations.slice(0, 4).map((entry) => `<li>${entry}</li>`).join("");
-}
-
 function showTeacherLogin() {
   landingPage.classList.add("hidden");
   studentAuthPage.classList.add("hidden");
@@ -753,7 +709,6 @@ async function loadAnalyticsOverview() {
         renderClassSummary(dashboardStudents);
         renderDifficultyChart(dashboardStudents);
         renderCommonMistakes(dashboardStudents);
-        renderRecommendations(dashboardStudents);
       }
     }
   } catch (error) {
@@ -832,7 +787,6 @@ async function loadStudents() {
       renderProgressChart(dashboardStudents);
       renderDifficultyChart(dashboardStudents);
       renderCommonMistakes(dashboardStudents);
-      renderRecommendations(dashboardStudents);
       renderStudentDetail(initialSelection || null);
     } else {
       dashboardStudents = [];
@@ -844,7 +798,6 @@ async function loadStudents() {
       renderProgressChart([]);
       renderDifficultyChart([]);
       renderCommonMistakes([]);
-      renderRecommendations([]);
       renderStudentDetail(null);
       if (studentsTableBody) {
         studentsTableBody.innerHTML = '<tr><td colspan="9">No students found</td></tr>';
@@ -861,7 +814,6 @@ async function loadStudents() {
     renderProgressChart([]);
     renderDifficultyChart([]);
     renderCommonMistakes([]);
-    renderRecommendations([]);
     renderStudentDetail(null);
     if (studentsTableBody) {
       studentsTableBody.innerHTML = '<tr><td colspan="9">Error loading students</td></tr>';

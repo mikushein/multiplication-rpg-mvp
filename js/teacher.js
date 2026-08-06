@@ -1,6 +1,10 @@
 import { monsters } from "./monsters.js";
 
 function resolveApiUrl() {
+  if (window.location.protocol === "file:") {
+    return "http://localhost:5000/api";
+  }
+
   // Supports local dev and production without code edits.
   if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
     return "http://localhost:5000/api";
@@ -38,6 +42,7 @@ const teacherInsightsBody = document.getElementById("teacher-insights-body");
 const teacherPhaseList = document.getElementById("teacher-phase-list");
 const teacherMissedList = document.getElementById("teacher-missed-list");
 const teacherStudentDetail = document.getElementById("teacher-student-detail");
+const rawStudentsTableBody = document.getElementById("raw-students-tbody");
 
 function showTeacherLogin() {
   landingPage.classList.add("hidden");
@@ -303,6 +308,8 @@ async function loadStudents() {
         studentsTableBody.appendChild(row);
       });
 
+      renderRawStudentTable(data.data);
+
       const firstStudent = data.data[0];
       if (firstStudent) {
         renderStudentDetail(firstStudent);
@@ -324,6 +331,40 @@ async function loadStudents() {
   }
 }
 
+function renderRawStudentTable(students) {
+  if (!rawStudentsTableBody) return;
+
+  const rows = Array.isArray(students) ? students : [];
+
+  if (!rows.length) {
+    rawStudentsTableBody.innerHTML = '<tr><td colspan="10">No student data available.</td></tr>';
+    return;
+  }
+
+  rawStudentsTableBody.innerHTML = rows.map((student) => {
+    const accuracyPercent = Math.max(0, Math.min(100, Number(student.accuracy) || 0));
+    const progressPercent = Math.max(0, Math.min(100, Number(student.progress) || 0));
+    const sessionsPlayed = Number(student.sessionsPlayed) || 0;
+    const attemptsCount = Number(student.attemptsCount) || 0;
+    const lastPlayed = student.lastPlayed ? new Date(student.lastPlayed).toLocaleString() : "—";
+
+    return `
+      <tr>
+        <td>${student.username || "—"}</td>
+        <td>${student.fullName || student.username || "—"}</td>
+        <td>${student.classSection || "—"}</td>
+        <td>${student.currentLevel || 0}</td>
+        <td>${student.xp || 0}</td>
+        <td>${progressPercent}%</td>
+        <td>${accuracyPercent}%</td>
+        <td>${sessionsPlayed}</td>
+        <td>${attemptsCount}</td>
+        <td>${lastPlayed}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
 function renderStudentDetail(student) {
   if (!teacherStudentDetail) return;
 
@@ -331,15 +372,19 @@ function renderStudentDetail(student) {
   const accuracyPercent = Math.max(0, Math.min(100, Number(student.accuracy) || 0));
   const progressPercent = Math.max(0, Math.min(100, Number(student.progress) || 0));
   const sessionsPlayed = Number(student.sessionsPlayed) || 0;
+  const attemptsCount = Number(student.attemptsCount) || 0;
 
   teacherStudentDetail.innerHTML = `
     <div><strong>${fullName}</strong></div>
+    <div>Username: ${student.username || "—"}</div>
     <div>Class: ${student.classSection || "—"}</div>
     <div>Current level: ${student.currentLevel || 0}</div>
     <div>XP: ${student.xp || 0}</div>
     <div>Accuracy: ${accuracyPercent}%</div>
     <div>Sessions played: ${sessionsPlayed}</div>
+    <div>Attempts recorded: ${attemptsCount}</div>
     <div>Progress: ${progressPercent}%</div>
+    <div class="detail-note">If this shows 0%, it usually means no answer attempts have been recorded for this student yet.</div>
   `;
 }
 

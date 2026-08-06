@@ -13,9 +13,10 @@ function buildStudentProgressSummary(gameSave = {}, sessions = [], attempts = []
   const incorrectAnswers = attempts.reduce((total, attempt) => total + (!attempt.isCorrect ? 1 : 0), 0);
   const accuracy = calculateAccuracy(correctAnswers, incorrectAnswers);
   const effectiveLevel = Math.max(gameSave.currentLevel || 0, completedLevels, 0);
+  const totalLevels = 18;
 
   return {
-    progress: Math.min(100, Math.round((effectiveLevel / 5) * 100)),
+    progress: Math.min(100, Math.round((effectiveLevel / totalLevels) * 100)),
     accuracy,
     sessionsPlayed: sessions.length,
     attemptsCount: attempts.length

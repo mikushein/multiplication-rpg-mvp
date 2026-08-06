@@ -992,6 +992,12 @@ button:disabled {
   padding: 0.7rem;
 }
 
+.dashboard-panel-raw-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
 .dashboard-table {
   overflow-x: auto;
   overflow-y: auto;

@@ -428,7 +428,12 @@ router.get('/teacher/analytics/overview', async (req, res) => {
           accuracy: analytics.accuracy,
           sessionsPlayed: analytics.sessionsPlayed,
           attemptsCount: analytics.attemptsCount,
-          lastPlayed: user.lastPlayed || null
+          lastPlayed: user.lastPlayed || null,
+          attempts: attempts.map((attempt) => ({
+            phase: attempt.phase,
+            isCorrect: attempt.isCorrect,
+            question: attempt.question
+          }))
         };
       })
     );

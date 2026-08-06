@@ -1,4 +1,8 @@
 function resolveApiUrl() {
+  if (window.location.protocol === "file:") {
+    return "http://localhost:5000/api";
+  }
+
   // Supports local dev and production without code edits.
   if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
     return "http://localhost:5000/api";

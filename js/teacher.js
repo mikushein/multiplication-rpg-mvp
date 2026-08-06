@@ -344,19 +344,28 @@ function getStudentAttemptSummary(student) {
     ? (attempts.reduce((sum, attempt) => sum + (Number(attempt.responseTimeSeconds) || 0), 0) / totalQuestions).toFixed(1)
     : "0.0";
 
-  const highestPhase = attempts.reduce((highest, attempt) => {
+  const highestProgress = attempts.reduce((best, attempt) => {
     const phaseValue = Number(attempt.phase) || 0;
-    return Math.max(highest, phaseValue);
-  }, 0);
+    const levelValue = Number(attempt.level) || 0;
 
-  const highestLevel = attempts.reduce((highest, attempt) => {
-    if ((Number(attempt.phase) || 0) !== highestPhase) {
-      return highest;
+    if (!best) {
+      return { phase: phaseValue, level: levelValue };
     }
 
-    const levelValue = Number(attempt.level) || 0;
-    return Math.max(highest, levelValue);
-  }, 0);
+    if (phaseValue > best.phase) {
+      return { phase: phaseValue, level: levelValue };
+    }
+
+    if (phaseValue === best.phase && levelValue > best.level) {
+      return { phase: best.phase, level: levelValue };
+    }
+
+    return best;
+  }, null);
+
+  const highestLevelReached = highestProgress
+    ? `Phase ${highestProgress.phase || 0} Level ${highestProgress.level || 0}`
+    : "Phase 0 Level 0";
 
   const latestActivity = formatDisplayDate(student);
 
@@ -368,8 +377,7 @@ function getStudentAttemptSummary(student) {
     incorrectAnswers,
     accuracy,
     averageResponseTime,
-    highestPhase,
-    highestLevel,
+    highestLevelReached,
     score: Number(student.xp) || 0,
     latestActivity
   };
@@ -391,8 +399,7 @@ function renderStudentSummaryTable(students) {
       <tr class="student-table-row" data-username="${student.username || ""}">
         <td>${summary.studentName}</td>
         <td>${summary.totalAttempts}</td>
-        <td>${summary.highestPhase}</td>
-        <td>${summary.highestLevel}</td>
+        <td>${summary.highestLevelReached}</td>
         <td>${summary.totalQuestions}</td>
         <td>${summary.correctAnswers}</td>
         <td>${summary.incorrectAnswers}</td>

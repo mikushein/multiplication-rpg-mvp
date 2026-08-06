@@ -377,6 +377,7 @@ router.get('/teacher/students', async (req, res) => {
           lastPlayed: user.lastPlayed || null,
           attempts: attempts.map((attempt) => ({
             phase: attempt.phase,
+            level: attempt.level,
             isCorrect: attempt.isCorrect,
             question: attempt.question,
             timestamp: attempt.timestamp,
@@ -433,6 +434,7 @@ router.get('/teacher/analytics/overview', async (req, res) => {
           lastPlayed: user.lastPlayed || null,
           attempts: attempts.map((attempt) => ({
             phase: attempt.phase,
+            level: attempt.level,
             isCorrect: attempt.isCorrect,
             question: attempt.question,
             timestamp: attempt.timestamp,

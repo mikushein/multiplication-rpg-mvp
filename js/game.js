@@ -69,6 +69,14 @@ let analyticsQuestionCount = 0;
 let analyticsBattleCount = 0;
 let analyticsLastQuestionStartedAt = null;
 
+function getProgressPhaseAndLevel(levelIndex = 0) {
+  const safeIndex = Math.max(0, Number(levelIndex) || 0);
+  return {
+    phase: Math.floor(safeIndex / 3) + 1,
+    level: (safeIndex % 3) + 1
+  };
+}
+
 function startAnalyticsSession() {
   analyticsSessionId = `session-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   analyticsSessionStartTime = Date.now();
@@ -79,10 +87,13 @@ function startAnalyticsSession() {
   analyticsBattleCount = 0;
   analyticsLastQuestionStartedAt = null;
 
+  const progress = getProgressPhaseAndLevel(playerState.levelIndex);
+
   trackAnalyticsEvent("session_started", {
     username: playerState.username,
     sessionId: analyticsSessionId,
-    level: playerState.levelIndex + 1,
+    phase: progress.phase,
+    level: progress.level,
     source: "gameplay"
   });
 }
@@ -119,6 +130,8 @@ function trackQuestionAttempt(isCorrect, answerValue, question) {
   }
   analyticsQuestionCount += 1;
 
+  const progress = getProgressPhaseAndLevel(playerState.levelIndex);
+
   trackAnalyticsEvent("question_answered", {
     username: playerState.username,
     sessionId: analyticsSessionId,
@@ -127,8 +140,8 @@ function trackQuestionAttempt(isCorrect, answerValue, question) {
     studentAnswer: answerValue,
     isCorrect,
     responseTimeSeconds,
-    level: playerState.levelIndex + 1,
-    phase: playerState.levelIndex + 1
+    phase: progress.phase,
+    level: progress.level
   });
 
   analyticsLastQuestionStartedAt = now;
@@ -243,12 +256,14 @@ function startBattleForCurrentLevel() {
   enableInput(true);
   clearAnswer();
 
+  const progress = getProgressPhaseAndLevel(playerState.levelIndex);
+
   trackAnalyticsEvent("battle_started", {
     username: playerState.username,
     sessionId: analyticsSessionId,
     monster: currentMonster.name,
-    level: playerState.levelIndex + 1,
-    phase: playerState.levelIndex + 1,
+    phase: progress.phase,
+    level: progress.level,
     battleNumber: analyticsBattleCount
   });
 }

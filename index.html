@@ -169,113 +169,120 @@
             </select>
           </section>
 
-          <section class="dashboard-panel dashboard-panel-chart">
-            <div class="dashboard-chart-header">
-              <h3>Overall Progress</h3>
-              <span>Current progress by student</span>
-            </div>
-            <svg id="teacher-progress-chart" viewBox="0 0 320 180" role="img" aria-label="Student progress chart"></svg>
-          </section>
-
-          <section class="dashboard-panel dashboard-panel-summary">
-            <div class="summary-card">
-              <span class="summary-label">Total students</span>
-              <strong id="summary-total-students">0</strong>
-            </div>
-            <div class="summary-card">
-              <span class="summary-label">Average accuracy</span>
-              <strong id="summary-average-accuracy">0%</strong>
-            </div>
-            <div class="summary-card">
-              <span class="summary-label">Need support</span>
-              <strong id="summary-support-count">0</strong>
+          <section class="dashboard-panel dashboard-panel-tabs">
+            <div class="dashboard-view-tabs" role="tablist" aria-label="Teacher analytics views">
+              <button id="teacher-class-tab" class="dashboard-view-tab active" type="button" data-view="class">Class Analytics</button>
+              <button id="teacher-student-tab" class="dashboard-view-tab" type="button" data-view="student">Student Analytics</button>
             </div>
           </section>
 
-          <section class="dashboard-panel dashboard-panel-insights">
-            <div class="dashboard-insights-header">
-              <h3>Class insights</h3>
-              <span>Quick view of growth and support needs</span>
-            </div>
-            <div class="insight-table-wrap">
-              <table class="insight-table">
-                <thead>
-                  <tr>
-                    <th>Student</th>
-                    <th>Progress</th>
-                    <th>Accuracy</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="teacher-insights-body"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="dashboard-panel dashboard-panel-analytics">
-            <div class="dashboard-insights-header">
-              <h3>Mastery breakdown</h3>
-              <span>Class phase accuracy and questions most often missed</span>
-            </div>
-            <div class="insight-grid">
-              <div class="insight-list">
-                <h4>Class phase accuracy</h4>
-                <ul id="teacher-phase-list"></ul>
+          <section id="teacher-class-view" class="dashboard-view-panel">
+            <section class="dashboard-panel dashboard-panel-chart">
+              <div class="trend-card">
+                <div class="dashboard-chart-header">
+                  <div>
+                    <h3>Class trend overview</h3>
+                    <span>Average accuracy across the selected class</span>
+                  </div>
+                </div>
+                <div id="teacher-class-trend-chart" class="trend-chart-placeholder">No class activity yet.</div>
               </div>
-              <div class="insight-list">
-                <h4>Most often missed questions</h4>
-                <ul id="teacher-missed-list"></ul>
+            </section>
+
+            <section class="dashboard-panel dashboard-panel-class-table">
+              <div class="dashboard-detail-header">
+                <h3>Class overview table</h3>
+                <span>Class-wide performance snapshot</span>
               </div>
-            </div>
+              <div class="dashboard-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Class</th>
+                      <th>Students</th>
+                      <th>Avg. Accuracy</th>
+                      <th>Highest Accuracy</th>
+                      <th>Lowest Accuracy</th>
+                      <th>Needs Support</th>
+                      <th>Total Questions</th>
+                      <th>Correct</th>
+                      <th>Incorrect</th>
+                    </tr>
+                  </thead>
+                  <tbody id="teacher-class-table-body"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="dashboard-panel dashboard-panel-summary">
+              <div class="summary-card">
+                <span class="summary-label">Total students</span>
+                <strong id="summary-total-students">0</strong>
+              </div>
+              <div class="summary-card">
+                <span class="summary-label">Average accuracy</span>
+                <strong id="summary-average-accuracy">0%</strong>
+              </div>
+              <div class="summary-card">
+                <span class="summary-label">Highest score</span>
+                <strong id="summary-highest-score">0</strong>
+              </div>
+              <div class="summary-card">
+                <span class="summary-label">Needs support</span>
+                <strong id="summary-support-count">0</strong>
+              </div>
+            </section>
+
+            <section class="dashboard-panel dashboard-panel-difficulty">
+              <div class="dashboard-detail-header">
+                <h3>Multiplication difficulty analysis</h3>
+                <span>Which tables need review</span>
+              </div>
+              <div id="teacher-difficulty-chart" class="difficulty-chart"></div>
+            </section>
+
+            <section class="dashboard-panel dashboard-panel-mistakes">
+              <div class="dashboard-detail-header">
+                <h3>Most common mistakes</h3>
+                <span>Questions students miss most often</span>
+              </div>
+              <ul id="teacher-mistakes-list" class="teacher-list"></ul>
+            </section>
+
+            <section class="dashboard-panel dashboard-panel-recommendations">
+              <div class="dashboard-detail-header">
+                <h3>Teacher recommendations</h3>
+                <span>Suggested practice based on current performance</span>
+              </div>
+              <ul id="teacher-recommendations-list" class="teacher-list"></ul>
+            </section>
           </section>
 
-          <section class="dashboard-panel dashboard-panel-table">
-            <div class="dashboard-table">
-              <table id="students-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Class</th>
-                    <th>Level</th>
-                    <th>XP</th>
-                    <th>Accuracy</th>
-                    <th>Sessions</th>
-                    <th>Progress</th>
-                  </tr>
-                </thead>
-                <tbody id="students-tbody">
-                  <tr><td colspan="7">Loading...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="dashboard-panel dashboard-panel-raw-table">
-            <div class="dashboard-insights-header">
-              <h3>Raw student details</h3>
-              <span>Direct view of the stored student data</span>
-            </div>
-            <div class="dashboard-table dashboard-table-raw">
-              <table id="raw-students-table">
-                <thead>
-                  <tr>
-                    <th>Username</th>
-                    <th>Full name</th>
-                    <th>Class</th>
-                    <th>Level</th>
-                    <th>XP</th>
-                    <th>Progress</th>
-                    <th>Accuracy</th>
-                    <th>Sessions</th>
-                    <th>Attempts</th>
-                    <th>Last played</th>
-                  </tr>
-                </thead>
-                <tbody id="raw-students-tbody">
-                  <tr><td colspan="10">Loading...</td></tr>
-                </tbody>
-              </table>
-            </div>
+          <section id="teacher-student-view" class="dashboard-view-panel hidden">
+            <section class="dashboard-panel dashboard-panel-detail">
+              <div class="dashboard-detail-header">
+                <h3>Student analytics</h3>
+                <span>Focus on one learner at a time</span>
+              </div>
+              <div class="student-selector-row">
+                <label for="teacher-student-select">Select student</label>
+                <select id="teacher-student-select" class="teacher-student-select">
+                  <option value="">Select a student</option>
+                </select>
+              </div>
+              <div class="trend-card">
+                <div class="dashboard-chart-header">
+                  <div>
+                    <h3>Selected student progress trend</h3>
+                    <span>Accuracy over recent sessions</span>
+                  </div>
+                </div>
+                <div id="teacher-trend-chart" class="trend-chart-placeholder">Select a student to view their growth over time.</div>
+              </div>
+              <div id="teacher-student-detail" class="student-detail-card">
+                <p class="detail-placeholder">Select a student to open their profile.</p>
+              </div>
+            </section>
           </section>
         </div>
       </div>

@@ -378,7 +378,9 @@ router.get('/teacher/students', async (req, res) => {
           attempts: attempts.map((attempt) => ({
             phase: attempt.phase,
             isCorrect: attempt.isCorrect,
-            question: attempt.question
+            question: attempt.question,
+            timestamp: attempt.timestamp,
+            responseTimeSeconds: attempt.responseTimeSeconds
           }))
         };
       })
@@ -432,7 +434,9 @@ router.get('/teacher/analytics/overview', async (req, res) => {
           attempts: attempts.map((attempt) => ({
             phase: attempt.phase,
             isCorrect: attempt.isCorrect,
-            question: attempt.question
+            question: attempt.question,
+            timestamp: attempt.timestamp,
+            responseTimeSeconds: attempt.responseTimeSeconds
           }))
         };
       })

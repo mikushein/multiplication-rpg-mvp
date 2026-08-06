@@ -377,7 +377,11 @@
 
     <script>
       // Local development default. Change back to the deployed backend URL when you publish again.
-      window.__API_BASE_URL__ = "http://localhost:5000";
+      const currentHost = window.location.hostname || "localhost";
+      const apiBase = currentHost === "localhost" || currentHost === "127.0.0.1" || currentHost === "::1" || currentHost === "0.0.0.0"
+        ? "http://localhost:5000"
+        : `http://${currentHost}:5000`;
+      window.__API_BASE_URL__ = apiBase;
     </script>
     <script type="module" src="js/game.js"></script>
     <script type="module" src="js/teacher.js"></script>

@@ -13,9 +13,22 @@ const allowedOrigins = (corsOrigin || "http://localhost:5500,http://127.0.0.1:55
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+const isAllowedOrigin = (origin) => {
+  if (!origin) {
+    return true;
+  }
+
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  return /^(https?:\/\/)(localhost|127\.0\.0\.1|0\.0\.0\.0|::1)(:\d+)?$/i.test(origin)
+    || /^(https?:\/\/)(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/i.test(origin);
+};
+
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (isAllowedOrigin(origin)) {
       callback(null, true);
     } else {
       callback(new Error(`Origin ${origin} not allowed by CORS`));

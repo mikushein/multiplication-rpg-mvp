@@ -1,16 +1,21 @@
 function resolveApiUrl() {
+  const override = window.__API_BASE_URL__;
+  if (override) {
+    return `${override.replace(/\/$/, "")}/api`;
+  }
+
   if (window.location.protocol === "file:") {
     return "http://localhost:5000/api";
   }
 
   // Supports local dev and production without code edits.
-  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+  const hostname = window.location.hostname;
+  if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1" || hostname === "0.0.0.0") {
     return "http://localhost:5000/api";
   }
 
-  const override = window.__API_BASE_URL__;
-  if (override) {
-    return `${override.replace(/\/$/, "")}/api`;
+  if (/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(hostname)) {
+    return `http://${hostname}:5000/api`;
   }
 
   // Fallback for same-origin hosting.

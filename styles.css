@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap");
+
 :root {
   color-scheme: dark;
   font-family: Arial, sans-serif;
@@ -10,10 +12,15 @@
 body {
   margin: 0;
   min-height: 100vh;
+  font-family: "Pixelify Sans", Arial, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at top, #1f2937 0%, #000 70%);
+  background: 
+  /* #C99D60;  #1f2937*/
+  /* radial-gradient(circle at bottom, #C99D60 60%, #374637 30%); */
+  /* linear-gradient(#C99D60, #ffee90); */
+  #151a15;
   transition: background 0.35s ease;
   padding: 1rem;
   overflow: hidden;
@@ -26,8 +33,9 @@ body {
   justify-content: center;
   padding: 1.2rem;
   border-radius: 2rem;
-  background: linear-gradient(145deg, #111827, #030712);
-  border: 3px solid #374151;
+  /* background: linear-gradient(145deg, #111827, #030712); */
+  background: #151a15;
+  border: 3px solid #2a2b22;
   box-shadow: 0 0 0 8px rgba(0, 0, 0, 0.35), 0 24px 70px rgba(0, 0, 0, 0.55);
   max-width: calc(100vw - 2rem);
   max-height: calc(100vh - 2rem);
@@ -41,7 +49,7 @@ body {
   aspect-ratio: 720 / 1280;
   padding: 1rem;
   border-radius: 1.25rem;
-  background-color: #000;
+  background-color: #0c0c0c;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -176,30 +184,53 @@ body {
 
 .landing-btn {
   width: 100%;
-  min-height: clamp(54px, 8vh, 72px);
-  border: none;
-  border-radius: 999px;
+  min-height: clamp(58px, 8.8vh, 78px);
+  border: 3px solid #2f2f2f;
+  border-radius: 0;
   background-color: transparent;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   color: #fff;
   font-weight: 800;
-  font-size: 1rem;
-  letter-spacing: 0.04em;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
   cursor: pointer;
-  transition: transform 0.18s ease, filter 0.18s ease;
-  box-shadow: none;
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 0 0 2px #f7d8a0 inset, 0 6px 0 #6b3d10, 0 10px 18px rgba(0, 0, 0, 0.28);
   padding: 0;
+  text-transform: uppercase;
 }
 
 .landing-btn:hover {
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-2px) scale(1.03);
   filter: brightness(1.08);
+  box-shadow: 0 0 0 2px #f7d8a0 inset, 0 7px 0 #6b3d10, 0 12px 20px rgba(0, 0, 0, 0.32);
+}
+
+.landing-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 2px #f7d8a0 inset, 0 2px 0 #6b3d10;
 }
 
 .landing-btn-start {
-  background-image: var(--start-btn-image, linear-gradient(135deg, #f59e0b, #d97706));
+  background-image: none;
+  background-color: #f4a62a;
+  color: #fff7d6;
+  min-height: clamp(66px, 10vh, 88px);
+  font-size: 1.12rem;
+  border-color: #7d3f0f;
+  box-shadow: 0 0 0 2px #ffd68a inset, 0 6px 0 #7d3f0f, 0 10px 18px rgba(0, 0, 0, 0.28);
+}
+
+.landing-btn-start:hover {
+  background-color: #ffb63d;
+  box-shadow: 0 0 0 2px #ffd68a inset, 0 7px 0 #7d3f0f, 0 12px 20px rgba(0, 0, 0, 0.32);
+}
+
+.landing-btn-start:active {
+  background-color: #e48d11;
+  box-shadow: 0 0 0 2px #ffd68a inset, 0 2px 0 #7d3f0f;
 }
 
 .landing-btn-teacher {
